@@ -3,7 +3,7 @@
 ## About
 PrepMate is a conversational chatbot capable of answering technical questions, explaining complex concepts, and guiding users with structured recommendations aligned to IT job requirements. It helps users prepare for IT interviews and more.
 
-This project was completed as part of the Python Programming module at the National Institute of Posts & Telecommunications (INPT), Rabat..
+This project was completed as part of the Python Programming module at the National Institute of Posts & Telecommunications (INPT), Rabat.
 
 ---
 
