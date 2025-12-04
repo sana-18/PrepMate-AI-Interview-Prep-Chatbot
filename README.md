@@ -7,16 +7,6 @@ Built with Python, Django, LLama model, and Grok API integration.
 
 ---
 
-## Folder Structure
-+ chatbot/
-+ chatbot_PrepMate/
-+ db.sqlite3
-+ manage.py
-+ requirements.txt
-
-
----
-
 ## Installation & Setup
 
 1. **Clone the repository**
@@ -38,13 +28,13 @@ python manage.py runserver
 ```
 ## Stack
 
-Python, 
+Python 
 
-Django, 
+Django
 
-LLama Model,
+LLama Model
 
-Grok API,
+Grok API
 
 SQLite
 
