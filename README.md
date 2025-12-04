@@ -1,9 +1,9 @@
 # PrepMate - AI Interview Preparation Chatbot
 
 ## About
-PrepMate is a conversational chatbot capable of answering technical questions, explaining complex concepts, and guiding users with structured recommendations aligned to IT job requirements. It helps users prepare for IT interviews and improve their knowledge in programming, databases, networking, AI/ML, cloud, and more.
+PrepMate is a conversational chatbot capable of answering technical questions, explaining complex concepts, and guiding users with structured recommendations aligned to IT job requirements. It helps users prepare for IT interviews and more.
 
-Built with Python, Django, LLama model, and Grok API integration.
+This project was completed as part of the Python Programming module at the National Institute of Posts & Telecommunications (INPT), Rabat..
 
 ---
 
