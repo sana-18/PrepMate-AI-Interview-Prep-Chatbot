@@ -1,0 +1,6 @@
+django
+django-allauth
+djangorestframework
+social-auth-app-django
+groq
+python-dotenv

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepMate Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #000000;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --accent-color: #0d6efd;
+            --header-height: 60px;
+            --sidebar-width: 280px;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0a0f1c;
+            --bg-secondary: #1a1f2e;
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --border-color: #2d3748;
+            --accent-color: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .controls-container {
+            margin-left: auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle,
+        .logout-button {
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            transition: background-color 0.2s;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: 0;
+            width: var(--sidebar-width);
+            background-color: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--bg-secondary);
+        }
+
+        .sidebar h2 {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.75rem;
+            /* Adjusted section title size */
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            /* Adjusted title size */
+            gap: 0.5rem;
+            /* Space between icon and title */
+        }
+
+        .sidebar-item i {
+            width: 16px;
+            /* Icon width */
+            height: 16px;
+            /* Icon height */
+            font-size: 16px;
+            /* Adjusted icon size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .delimiter {
+            border-top: 1px solid var(--border-color);
+            margin: 1rem 0;
+        }
+
+        /* Custom scrollbar for WebKit browsers (Chrome, Safari) */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+
+        /* Main Chat Area */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            height: calc(100vh - var(--header-height));
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--bg-secondary);
+        }
+
+        /* Custom scrollbar for WebKit browsers (Chrome, Safari) */
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .chat-history {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--bg-secondary);
+        }
+
+        /* Custom scrollbar for WebKit browsers (Chrome, Safari) */
+        .chat-history::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .message {
+            margin-bottom: 0.0rem;
+            padding: 0.rem;
+            border-radius: 5px;
+            max-width: 80%;
+            white-space: pre-wrap; /* preserves newlines and spacing */
+            word-wrap: break-word;
+        }
+
+        .message.assistant {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            margin-right: auto;
+
+        }
+
+        .message.user {
+            background-color: var(--accent-color);
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            resize: none;
+            min-height: 44px;
+            font-family: inherit;
+        }
+
+        .send-button {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* New Upload Button */
+        .upload-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 6px 12px;
+            margin-left: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* New Upload Button */
+
+        /* New Chat Button */
+        .new-chat-button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            text-align: left;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .new-chat-button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .new-chat-button i {
+            font-size: 14px;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Fixed Header -->
+    <header class="header">
+        <h1>PrepMate</h1>
+        <div class="controls-container">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon theme-toggle-icon" id="moonIcon"></i>
+                <i class="fas fa-sun theme-toggle-icon" id="sunIcon" style="display: none;"></i>
+            </button>
+            <button class="logout-button" id="logoutButton">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <!-- New Chat Button -->
+        <button class="new-chat-button" id="newChatButton">
+            <i class="fas fa-plus"></i> New Chat
+        </button>
+        <!-- Chat History Title -->
+        <h2>Chat History</h2>
+
+        <!-- Today Section -->
+        <div class="sidebar-section">
+            <h3>Today</h3>
+            {% for chat in today_chats %}
+            <a href="#" class="sidebar-item" data-chat-id="{{ chat.id }}">
+                <i class="fas fa-comment-dots"></i>
+                {{ chat.message|truncatechars:30 }}
+            </a>
+            {% endfor %}
+        </div>
+        <!-- Delimiter -->
+        <div class="delimiter"></div>
+
+        <!-- 7 Days Ago Section -->
+        <div class="sidebar-section">
+            <h3>Last 7 Days</h3>
+            {% for chat in last_7_days_chats %}
+            <a href="#" class="sidebar-item" data-chat-id="{{ chat.id }}">
+                <i class="fas fa-comment-dots"></i>
+                {{ chat.message|truncatechars:30 }} <!-- Display a snippet of the message -->
+            </a>
+            {% endfor %}
+
+        </div>
+        <!-- Delimiter -->
+        <div class="delimiter"></div>
+
+        <!-- 30 Days Ago Section -->
+        <div class="sidebar-section">
+            <h3>Last 30 Days</h3>
+            {% for chat in last_30_days_chats %}
+            <a href="#" class="sidebar-item" data-chat-id="{{ chat.id }}">
+                <i class="fas fa-comment-dots"></i>
+                {{ chat.message|truncatechars:30 }} <!-- Display a snippet of the message -->
+            </a>
+            {% endfor %}
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="chat-container">
+            <div class="chat-history" id="chatHistory">
+                <div class="message assistant">
+                    <!-- -->
+                    Hello! I'm PrepMate, your interview preparation assistant. How can I help you today? 
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <!-- Add the CSRF token as a hidden input field -->
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <textarea class="chat-input" id="messageInput" placeholder="Ask me anything about interview preparation..."
+                    rows="1"></textarea>
+                <button class="send-button" id="sendButton">Send</button>
+               
+                <!-- Add the uploadInput button -->
+                <!-- 
+                <label for="uploadInput" class="upload-button">
+                    <i class="fas fa-upload"></i> Upload Document
+                </label>
+                <input type="file" id="uploadInput" style="display: none;" accept=".pdf,.doc,.docx,.txt">
+                <!-- Add the uploadInput button -->
+                 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // Theme Toggle Functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const htmlElement = document.documentElement;
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            htmlElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const moonIcon = document.getElementById('moonIcon');
+                const sunIcon = document.getElementById('sunIcon');
+
+                if (theme === 'dark') {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                } else {
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                }
+            }
+        });
+
+
+        // Logout Functionality
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            window.location.href = '/login';
+        });
+
+
+        // Chat Functionality
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatHistory = document.getElementById('chatHistory');
+
+
+        // Auto-resize input
+        messageInput.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+
+
+        // Send message handler
+        
+        async function handleSendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Disable input and button while processing
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+
+            // Add user message to chat history
+            addMessage(message, true);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Get the CSRF token from the hidden input field
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Send message to server and await response
+            try {
+                const response = await fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken // Include the CSRF token in the headers
+                    },
+                    body: new URLSearchParams({
+                        'message': message
+                    })
+                });
+                const data = await response.json();
+                addMessage(data.response, false); // Add server response to chat history
+                // Save the chat to the database
+                await saveChat(message, data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                addMessage("Sorry, something went wrong. Please try again.", false);
+            }
+
+            // Re-enable input and button
+            messageInput.disabled = false;
+            sendButton.disabled = false;
+            messageInput.focus();
+        }
+
+
+        // Function to save chat to the database
+        async function saveChat(userMessage, assistantResponse) {
+            try {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                await fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: new URLSearchParams({
+                        'user_message': userMessage,
+                        'assistant_response': assistantResponse
+                    })
+                });
+            } catch (error) {
+                console.error('Error saving chat:', error);
+            }
+        }
+
+
+        // load chats 
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatHistory = document.getElementById('chatHistory');
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', async (e) => {
+                    e.preventDefault();
+
+                    // Fetch the chat history for the selected chat
+                    const chatId = item.dataset.chatId; // Add a data-chat-id attribute to each sidebar item
+                    if (!chatId) return;
+
+                    try {
+                        const response = await fetch(`/load_chat/${chatId}/`);
+                        const data = await response.json();
+
+                        // Clear the chat history
+                        chatHistory.innerHTML = '';
+
+                        // Add the fetched chat history
+                        data.messages.forEach(message => {
+                            const messageDiv = document.createElement('div');
+                            messageDiv.className = `message ${message.is_user ? 'user' : 'assistant'}`;
+                            messageDiv.textContent = message.content;
+                            chatHistory.appendChild(messageDiv);
+                        });
+
+                        // Scroll to the bottom
+                        chatHistory.scrollTop = chatHistory.scrollHeight;
+                    } catch (error) {
+                        console.error('Error loading chat:', error);
+                    }
+                });
+            });
+        });
+
+
+    // for new chat creation
+    document.addEventListener('DOMContentLoaded', () => {
+        const newChatButton = document.getElementById('newChatButton');
+        const chatHistory = document.getElementById('chatHistory');
+
+        newChatButton.addEventListener('click', () => {
+            // Clear the chat history
+            chatHistory.innerHTML = '';
+
+            // Add a default assistant message
+            const defaultMessage = document.createElement('div');
+            defaultMessage.className = 'message assistant';
+            defaultMessage.textContent = "Hello! I'm PrepMate, your interview preparation assistant. How can I help you today?";
+            chatHistory.appendChild(defaultMessage);
+
+            // Scroll to the bottom
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        });
+    });
+
+    function format_response(answer) {
+        // Normalize line breaks
+        let text = answer.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+        // Remove Markdown symbols for plain text display
+        text = text.replace(/\*\*\*(.*?)\*\*\*/g, '$1')  // bold + italic (must be first)
+            .replace(/\*\*(.*?)\*\*/g, '$1')  // bold
+            .replace(/\*(.*?)\*/g, '$1')      // italic
+            .replace(/`(.*?)`/g, '$1');       // inline code
+
+        // Split by sentence-ending punctuation or newlines for better spacing
+        const lines = text.split(/\n|(?<=\.)\s+/);
+
+        let formattedAnswer = '';
+        let lastType = null;
+
+        lines.forEach(line => {
+            let trimmed = line.trim();
+            if (!trimmed) return;
+
+            let newLine = '';
+
+            // Headings (ending with colon)
+            if (trimmed.endsWith(':')) {
+                newLine = '\n' + trimmed + '\n';
+                lastType = 'heading';
+            }
+            // Numbered list
+            else if (/^\d+\./.test(trimmed)) {
+                newLine = trimmed + '\n';
+                lastType = 'numbered';
+            }
+            // Bullet points
+            else if (/^(\*|-|\u2022)\s+/.test(trimmed)) {
+                newLine = '  • ' + trimmed.replace(/^(\*|-|\u2022)\s+/, '') + '\n';
+                lastType = 'bullet';
+            }
+            // Regular paragraph
+            else {
+                // Add extra newline if previous line was heading or numbered
+                if (lastType === 'heading' || lastType === 'numbered') {
+                    newLine = trimmed + '\n';
+                } else {
+                    newLine = trimmed + '\n\n';
+                }
+                lastType = 'paragraph';
+            }
+
+            formattedAnswer += newLine;
+        });
+
+        return formattedAnswer.trim();
+    }
+
+    function addMessage(content, isUser) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+        // Format the assistant's response
+        if (!isUser) {
+            content = format_response(content);
+        }
+
+        // Set the content (plain text for user, formatted plain text for assistant)
+        messageDiv.innerHTML = content.replace(/\n/g, '<br>');
+        //messageDiv.textContent = content;
+
+        chatHistory.appendChild(messageDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    // Event listeners for sending messages
+    sendButton.addEventListener('click', handleSendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSendMessage();
+        }
+    });
+    /*
+    // Handle Upload in JavaScript
+    document.getElementById('uploadInput').addEventListener('change', async function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('document', file);
+
+        // Show loading message
+        addMessage("Analyzing your document, please wait...", false);
+
+        try {
+            const response = await fetch('/upload_document/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            addMessage(data.response, false);
+        } catch (error) {
+            console.error('Upload error:', error);
+            addMessage("Failed to process the document.", false);
+        }
+
+        this.value = ''; // Reset the input
+    });
+   */
+
+</script>
+    </body>
+    
+    </html>
