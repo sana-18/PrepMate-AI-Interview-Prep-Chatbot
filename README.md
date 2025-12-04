@@ -8,12 +8,11 @@ Built with Python, Django, LLama model, and Grok API integration.
 ---
 
 ## Folder Structure
-chatbot/
-chatbot_PrepMate/
-.env
-db.sqlite3
-manage.py
-requirements.txt
++ chatbot/
++ chatbot_PrepMate/
++ db.sqlite3
++ manage.py
++ requirements.txt
 
 
 ---
@@ -24,28 +23,28 @@ requirements.txt
 ```bash
 git clone https://github.com/your-username/PrepMate-AI-Interview-Prep-Chatbot.git
 cd PrepMate-AI-Interview-Prep-Chatbot
-
+```
 2. **Install dependencies**
 ```bash
 pip install -r requirements.txt
-
+```
 3. **Apply migrations**
 ```bash
 python manage.py migrate
-
+```
 4. **Run the server**
 ```bash
 python manage.py runserver
+```
+## Stack
 
-Stack
+Python, 
 
-Python
+Django, 
 
-Django
+LLama Model,
 
-LLama Model
-
-Grok API
+Grok API,
 
 SQLite
 
